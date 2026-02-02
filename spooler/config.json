@@ -1,9 +1,0 @@
-{
-  "sdcp_ws_url": "ws://<PRINTER_IP>:3030/websocket?command=subscribe",
-  "watch_folder": "/path/to/spooler/watch",
-  "spoolman_local_url": "http://localhost:7912",
-  "spoolman_url": "http://<SPOOLMAN_IP>:7912",
-  "delete_after_print": true,
-  "always_running": false,
-  "hide_one_time_mode_terminal": false
-}
