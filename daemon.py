@@ -30,6 +30,7 @@ DELETE_AFTER_PRINT = config.get("delete_after_print", True)
 # -----------------------------
 pending_jobs = {}   # filename → metadata
 spool_cache = []    # list of spools from Spoolman
+shutdown_event = asyncio.Event()
 
 
 # -----------------------------
@@ -307,12 +308,62 @@ async def keepalive(ws):
         await asyncio.sleep(15)
 
 # -----------------------------
+# FAKE TEST PRINT
+# -----------------------------
+
+async def simulate_fake_print(print_active_ref, waiting_for_idle_ref, config):
+    """
+    Simulates a print start → print end → idle transition.
+    This triggers your existing detection logic without needing a real print.
+    """
+
+    print("[TEST] Simulating fake print start")
+
+    # Fake start packet
+    current_status = 13
+    filename = "FAKE_TEST_FILE.gcode"
+
+    # Trigger your existing print-start logic
+    print_active_ref[0] = True
+    waiting_for_idle_ref[0] = False
+
+    print("[SDCP] Print started detected via test packet")
+    print(f"[SDCP] Filename reported: {filename}")
+
+    # Simulate printing for a moment
+    await asyncio.sleep(2)
+
+    print("[TEST] Simulating fake print end")
+
+    # Fake end packet
+    current_status = 0  # or 1, doesn't matter for your logic
+
+    print("[SDCP] Print ended or paused, resetting state")
+    print_active_ref[0] = False
+    waiting_for_idle_ref[0] = True
+
+    # Simulate idle transition
+    await asyncio.sleep(1)
+    print("[SDCP] Printer is idle")
+
+    if not config["always_running"]:
+        print("[SDCP] One Time Mode: Exiting now (TEST)")
+        return True  # signal shutdown
+
+    waiting_for_idle_ref[0] = False
+    return False
+
+
+# -----------------------------
 # SDCP WEBSOCKET LISTENER (STATUS-BASED)
 # -----------------------------
 async def sdcp_listener():
     last_status = None # Not currently in use, but could be useful if needed.
     print_active = False # This prevents repeating file checks
     waiting_for_idle = False  # This prevents early exit on "always_running" = False.
+    print_active_ref = [False]
+    waiting_for_idle_ref = [False]
+    test_print = False # SET TO TRUE TO TEST THE PRINT EXIT CONDITON.
 
     while True:
         try:
@@ -322,6 +373,13 @@ async def sdcp_listener():
 
                 asyncio.create_task(keepalive(ws))
 
+                # Calls a Test Print.
+                if test_print:
+                    should_exit = await simulate_fake_print(print_active_ref, waiting_for_idle_ref, config)
+                    if should_exit:
+                        shutdown_event.set()
+                        return
+                    
                 async for msg in ws:
                     data = json.loads(msg)
 
@@ -418,12 +476,15 @@ async def sdcp_listener():
                         print("[SDCP] Print ended or paused, resetting state")
                         print_active = False
                         waiting_for_idle = True
+                    
+                    
 
                     if waiting_for_idle and current_status == 1:
                         print("[SDCP] Printer is idle")
 
                         if not config["always_running"]:
                             print("[SDCP] One Time Mode: Exiting now")
+                            shutdown_event.set()
                             return
                         
                         waiting_for_idle = False
@@ -441,26 +502,38 @@ async def sdcp_listener():
 # -----------------------------
 # MAIN
 # -----------------------------
-def main():
+async def main_async():
     refresh_spool_cache()
     observer = start_folder_watcher()
 
     initial_folder_scan()
 
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+    # Start SDCP listener
+    sdcp_task = asyncio.create_task(sdcp_listener())
 
+    # Wait for shutdown signal
+    await shutdown_event.wait()
+
+    print("[MAIN] Shutdown event received, stopping services...")
+
+    # Stop folder watcher
+    observer.stop()
+    observer.join()
+
+    # Cancel SDCP listener if still running
+    sdcp_task.cancel()
     try:
-        loop.run_until_complete(sdcp_listener())
+        await sdcp_task
+    except:
+        pass
+
+    print("[MAIN] Daemon exiting cleanly")
+
+def main():
+    try:
+        asyncio.run(main_async())
     except KeyboardInterrupt:
-        observer.stop()
-    finally:
-        observer.join()
-        loop.close()
-
+        print("[MAIN] Interrupted by user")
 
 if __name__ == "__main__":
     main()
