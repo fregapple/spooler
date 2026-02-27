@@ -27,7 +27,7 @@ class Config:
         "log_timestamps": True,        
     }
 
-    def __init__(self, path="config.json", logger=None):
+    def __init__(self, path="..config/config.json", logger=None):
         self.logger = logger
         self.path = Path(path)
         self._data = self._load()
