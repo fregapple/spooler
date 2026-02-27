@@ -2,6 +2,8 @@ import json, asyncio
 from pathlib import Path
 from utils.colors import CONFIG
 
+# BASE_DIR = Path(__file__).parent.parent
+
 class ConfigError(Exception):
     """Raised when the configuration file is invalid."""
     pass
@@ -27,7 +29,7 @@ class Config:
         "log_timestamps": True,        
     }
 
-    def __init__(self, path="..config/config.json", logger=None):
+    def __init__(self, path="../config/config.json", logger=None):
         self.logger = logger
         self.path = Path(path)
         self._data = self._load()
