@@ -53,12 +53,8 @@ class AirPurifier(tinytuya.Device):
     DPS_TEST4 = "19"  # Unknown, always 0?
     DPS_COLOR = "102"
 
-    def __init__(
-        self, dev_id, address, local_key, version, log, model=None, always_on=False
-    ):
-        super().__init__(
-            dev_id=dev_id, address=address, local_key=local_key, version=version
-        )
+    def __init__(self, dev_id, address, local_key, version, log, model=None, always_on=False):
+        super().__init__(dev_id=dev_id, address=address, local_key=local_key, version=version)
         self.log = log
         self.model = model
         self.always_on = always_on
@@ -97,9 +93,7 @@ class AirPurifier(tinytuya.Device):
 
     def set_countdown(self, hours):
         if hours not in ["cancel", "2h", "4h", "8h"]:
-            raise ValueError(
-                "Invalid countdown time. Use 0 (cancel), 2, 4, or 8 hours."
-            )
+            raise ValueError("Invalid countdown time. Use 0 (cancel), 2, 4, or 8 hours.")
         self.set_value(self.DPS_COUNTDOWN, hours)
 
     def get_countdown(self):

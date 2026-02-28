@@ -54,9 +54,7 @@ class Logger:
 
     def _forward_log(self, level, tag, message):
         try:
-            asyncio.create_task(
-                forward("log", {"level": level, "tag": tag, "message": message})
-            )
+            asyncio.create_task(forward("log", {"level": level, "tag": tag, "message": message}))
         except RuntimeError:
             pass
 

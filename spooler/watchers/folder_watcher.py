@@ -1,6 +1,7 @@
 # watchers/folder_watcher.py
 from utils.colors import WATCH
 from watchdog.observers import Observer
+
 from watchers.gcode_handler import GcodeHandler
 
 

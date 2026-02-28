@@ -1,6 +1,6 @@
 [tool.ruff]
 line-length = 120
-extend-select = ["I"]        # enable import sorting
+lint.extend-select = ["I"]        # enable import sorting
 fix = true                   # allow autofixes
 target-version = "py310"
 

@@ -2,13 +2,14 @@ import asyncio
 import json
 
 import websockets
+from ui.progress import render_progress
+from utils.colors import SDCP
+
 from sdcp import events
 from sdcp.forwarder import forward
 from sdcp.keepalive import keepalive
 from sdcp.parser import parse_message
 from sdcp.state import PrintState
-from ui.progress import render_progress
-from utils.colors import SDCP
 
 
 async def sdcp_listener(config, log, devices=None):
@@ -41,9 +42,7 @@ async def sdcp_listener(config, log, devices=None):
                     print_status = parsed["print_status"]
                     progress = parsed["progress"]
                     filename = parsed["filename"]
-                    total_extrusions = parsed["printinfo"].get(
-                        "54 6F 74 61 6C 45 78 74 72 75 73 69 6F 6E 00"
-                    )
+                    total_extrusions = parsed["printinfo"].get("54 6F 74 61 6C 45 78 74 72 75 73 69 6F 6E 00")
 
                     # Update state
                     if filename and filename.strip():
@@ -54,11 +53,7 @@ async def sdcp_listener(config, log, devices=None):
                     # -----------------------------
                     # PRINT START + PREHEAT
                     # -----------------------------
-                    if (
-                        machine_status == [1]
-                        and (print_status == 16 or print_status == 13)
-                        and not state.active
-                    ):
+                    if machine_status == [1] and (print_status == 16 or print_status == 13) and not state.active:
                         await events.handle_print_start(state, devices, config, log)
 
                     # -----------------------------

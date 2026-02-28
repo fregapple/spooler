@@ -40,9 +40,7 @@ def parse_gcode_metadata(path):
                 break
 
     # Normalize purge-line usage
-    filament_presets, filament_g_list = normalize_filament_usage(
-        filament_presets, filament_g_list
-    )
+    filament_presets, filament_g_list = normalize_filament_usage(filament_presets, filament_g_list)
 
     return {
         "filament_presets": filament_presets or [],

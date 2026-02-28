@@ -1,5 +1,6 @@
-from core.device_registry import DEVICE_REGISTRY
 from utils.colors import DEVICE
+
+from core.device_registry import DEVICE_REGISTRY
 
 
 class DeviceContainer:
@@ -44,9 +45,7 @@ def load_devices(config, log):
             setattr(container, dtype, device)
 
         except Exception as e:
-            log.error(
-                DEVICE, f"Failed to initialize device {dtype} (ID: {dev_id}): {e}"
-            )
+            log.error(DEVICE, f"Failed to initialize device {dtype} (ID: {dev_id}): {e}")
             setattr(container, dtype, None)
 
     return container

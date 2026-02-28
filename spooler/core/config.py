@@ -78,9 +78,7 @@ class Config:
 
         if missing:
             if self.logger:
-                self.logger.error(
-                    CONFIG, f"Missing required config fields: {', '.join(missing)}"
-                )
+                self.logger.error(CONFIG, f"Missing required config fields: {', '.join(missing)}")
             raise ConfigError(f"Missing required config fields: {', '.join(missing)}")
 
         if empty:
@@ -89,9 +87,7 @@ class Config:
                     CONFIG,
                     f"Required config fields cannot be empty: {', '.join(empty)}",
                 )
-            raise ConfigError(
-                f"Required config fields cannot be empty: {', '.join(empty)}"
-            )
+            raise ConfigError(f"Required config fields cannot be empty: {', '.join(empty)}")
 
     def _validate_optional_booleans(self):
         for key, default in self.OPTIONAL_FIELDS_WITH_DEFAULTS.items():
@@ -127,9 +123,7 @@ class Config:
                     CONFIG,
                     f"'devices' field must be a list. Got {type(devices).__name__}.",
                 )
-            raise ConfigError(
-                f"'devices' field must be a list. Got {type(devices).__name__}."
-            )
+            raise ConfigError(f"'devices' field must be a list. Got {type(devices).__name__}.")
 
         for idx, device in enumerate(devices):
             if not isinstance(device, dict):
@@ -138,9 +132,7 @@ class Config:
                         CONFIG,
                         f"Device entry at index {idx} must be an object. Got {type(device).__name__}.",
                     )
-                raise ConfigError(
-                    f"Device entry at index {idx} must be an object. Got {type(device).__name__}."
-                )
+                raise ConfigError(f"Device entry at index {idx} must be an object. Got {type(device).__name__}.")
 
             required_device_fields = ["device_type", "id", "key"]
             for field in required_device_fields:
