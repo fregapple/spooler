@@ -42,7 +42,7 @@ echo          Spoolman - Centauri Carbon - Orcaslicer Bridge
 echo ================================================================
 echo(
 
-echo [RUN] Starting SDCP ---> Spoolman daemon...
+echo [RUN] Starting SDCP --- Spoolman daemon...
 python "%~dp0daemon.py"
 
 endlocal

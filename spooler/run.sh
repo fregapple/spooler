@@ -43,5 +43,5 @@ cat << "EOF"
           Spoolman - Centauri Carbon - Orcaslicer Bridge
 ================================================================
 EOF
-echo "[RUN] Starting SDCP ---> Spoolman daemon..."
+echo "[RUN] Starting SDCP --- Spoolman daemon..."
 python3 "$SCRIPT_DIR/daemon.py"
