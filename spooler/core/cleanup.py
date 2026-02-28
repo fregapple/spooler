@@ -12,5 +12,8 @@ def cleanup(state=None, devices=None, config=None, log=None):
     else:
         log.error(
             WATCH,
-            f"Deleting {state.shortname} Failed.. File may not exist / been removed already / or configured incorrectly.",
+            (
+                f"Deleting {state.shortname} Failed.. File may not exist / been "
+                "removed already / or configured incorrectly."
+            ),
         )

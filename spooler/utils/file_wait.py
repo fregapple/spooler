@@ -5,7 +5,9 @@ import time
 # FILE WRITE WAIT
 # -----------------------------
 """
-This is needed to allow the GCODE file is completely created before reading it. Otherwise the daemon will load a partially created or empty gcode. Which will most-likely be missing the required information
+This ensures the GCODE file is completely created before reading it.
+Otherwise the daemon can load a partially created or empty gcode which is
+likely missing the required information.
 """
 
 

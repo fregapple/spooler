@@ -35,7 +35,7 @@ async def handle_print_start(state, devices, config, log):
     if not state.job:
         log.error(
             SDCP,
-            f"Failed to load job metadata for {state.shortname} after {max_retries} attempts",
+            (f"Failed to load job metadata for {state.shortname} after " f"{max_retries} attempts"),
         )
         return
 
@@ -99,7 +99,9 @@ async def handle_print_complete(state, devices, config, log):
     else:
         spool_cache = refresh_spool_cache(config, log)
 
-    # Counter for how many presets we match to usage. If multiple presets, we will use ORCA metadata usage instead of SDCP usage for all presets, since SDCP usage is total and not per-preset.
+    # Counter for how many presets we match to usage.
+    # If multiple presets, we will use ORCA metadata usage instead of SDCP usage for all presets,
+    # since SDCP usage is total and not per-preset.
     used = 0
 
     for preset, grams in zip(presets, usage_list):
@@ -126,11 +128,17 @@ async def handle_print_complete(state, devices, config, log):
             if gram_diff >= 11:
                 log.warn(
                     SDCP,
-                    f"Large discrepancy between SDCP and ORCA usage for {preset}: {gram_diff}g. Updating Spoolman, but you may have to change values manually.",
+                    (
+                        f"Large discrepancy between SDCP and ORCA usage for {preset}: {gram_diff}g. "
+                        "Updating Spoolman, but you may have to change values manually."
+                    ),
                 )
                 notify(
                     "Large Discrepancy",
-                    f"Large discrepancy detected for preset {preset}: {gram_diff}g. Updating Spoolman, but you may have to change values manually.",
+                    (
+                        f"Large discrepancy detected for preset {preset}: {gram_diff}g. "
+                        "Updating Spoolman, but you may have to change values manually."
+                    ),
                     config.apprise_tag_custom,
                     config,
                     log,
@@ -141,7 +149,11 @@ async def handle_print_complete(state, devices, config, log):
         else:
             log.info(
                 SDCP,
-                f"Multiple presets detected. Using ORCA metadata usage of {grams}g for preset {preset}. SDCP usage was {sdcp_grams}g, but will not be used for update due to multiple presets.",
+                (
+                    f"Multiple presets detected. Using ORCA metadata usage of {grams}g for preset {preset}. "
+                    f"SDCP usage was {sdcp_grams}g, but will not be used for update due to "
+                    "multiple presets."
+                ),
             )
             update_spoolman(spool_id, grams, config, log, notify_fn=notify)
 

@@ -77,17 +77,19 @@ class Config:
                 empty.append(key)
 
         if missing:
+            missing_list = ", ".join(missing)
             if self.logger:
-                self.logger.error(CONFIG, f"Missing required config fields: {', '.join(missing)}")
-            raise ConfigError(f"Missing required config fields: {', '.join(missing)}")
+                self.logger.error(CONFIG, f"Missing required config fields: {missing_list}")
+            raise ConfigError(f"Missing required config fields: {missing_list}")
 
         if empty:
+            empty_list = ", ".join(empty)
             if self.logger:
                 self.logger.error(
                     CONFIG,
-                    f"Required config fields cannot be empty: {', '.join(empty)}",
+                    f"Required config fields cannot be empty: {empty_list}",
                 )
-            raise ConfigError(f"Required config fields cannot be empty: {', '.join(empty)}")
+            raise ConfigError(f"Required config fields cannot be empty: {empty_list}")
 
     def _validate_optional_booleans(self):
         for key, default in self.OPTIONAL_FIELDS_WITH_DEFAULTS.items():
