@@ -48,9 +48,12 @@ class Config:
             if self.logger:
                 self.logger.error(CONFIG, f"Config file not found: {self.path}")
                 self.logger.warn(
-                    CONFIG,
-                    "Copy and rename the config_example.json file. Make sure to fill out all the necessary information.",
-                )
+                        CONFIG,
+                        (
+                            "Copy and rename the config_example.json file. Make sure to "
+                            "fill out all the necessary information."
+                        ),
+                    )
             raise FileNotFoundError(f"Config file not found: {self.path}")
 
         try:
