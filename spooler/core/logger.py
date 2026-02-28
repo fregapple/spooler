@@ -1,8 +1,11 @@
+import asyncio
+import os
+import re
 from datetime import datetime
 from pathlib import Path
-from utils.colors import LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR, RESET
-import sys, asyncio, re, os
+
 from sdcp.forwarder import forward
+from utils.colors import LOG_DEBUG, LOG_ERROR, LOG_INFO, LOG_WARN, RESET
 
 ANSI_ESCAPE = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
 BASE_DIR = Path(__file__).parent.parent

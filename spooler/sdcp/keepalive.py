@@ -1,10 +1,11 @@
 import asyncio
 import json
 
+
 async def keepalive(ws):
     while True:
         try:
             await ws.send(json.dumps({"Cmd": "ping"}))
-        except:
+        except Exception:
             return
         await asyncio.sleep(10)

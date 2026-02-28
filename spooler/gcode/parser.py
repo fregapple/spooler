@@ -1,6 +1,8 @@
 import os
 import re
+
 from gcode.normalizer import normalize_filament_usage
+
 
 def parse_gcode_metadata(path):
     """

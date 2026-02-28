@@ -1,8 +1,9 @@
 import asyncio
+
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
-from textual.widgets import Static, Log, ProgressBar
 from textual.reactive import reactive
+from textual.widgets import Log, ProgressBar, Static
 
 # ── Header ───────────────────────────────────────────────────
 

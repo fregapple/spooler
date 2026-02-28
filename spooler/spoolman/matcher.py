@@ -1,5 +1,6 @@
 from utils.colors import MATCH
 
+
 def split_preset_name(preset):
     parts = [p.strip() for p in preset.split("-")]
     if len(parts) < 3:

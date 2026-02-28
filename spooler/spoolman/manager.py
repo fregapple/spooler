@@ -1,6 +1,7 @@
 import requests
 from utils.colors import SPOOLMAN
 
+
 def refresh_spool_cache(config, log):
     """
     Fetch all spools from Spoolman.

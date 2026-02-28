@@ -1,12 +1,12 @@
-from ui.notify import notify
+import asyncio
+
+from core.cleanup import cleanup
+from core.state import pending_jobs
 from spoolman.manager import refresh_spool_cache, update_spoolman
 from spoolman.matcher import find_spool_for_preset
-from utils.colors import SDCP, SPOOLMAN, DEVICE
-from core.state import pending_jobs
+from ui.notify import notify
+from utils.colors import DEVICE, SDCP, SPOOLMAN
 from utils.mm_to_gram import extrusion_mm_to_grams
-from core.cleanup import cleanup
-
-import asyncio
 
 
 async def handle_print_start(state, devices, config, log):

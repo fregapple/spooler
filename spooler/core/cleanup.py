@@ -1,5 +1,7 @@
 from pathlib import Path
+
 from utils.colors import WATCH
+
 
 def cleanup(state=None, devices=None, config=None, log=None):
     file = Path(f"{config.watch_folder}/{state.filename}")

@@ -1,5 +1,6 @@
 import math
 
+
 def extrusion_mm_to_grams(extrusion_mm: float, diameter_mm: float = 1.75, density_g_cm3: float = 1.24) -> float:
     """
     Convert SDCP extrusion length (mm of filament) into grams.

@@ -1,5 +1,6 @@
-from utils.colors import DEVICE
 from core.device_registry import DEVICE_REGISTRY
+from utils.colors import DEVICE
+
 
 class DeviceContainer:
     pass

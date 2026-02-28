@@ -1,10 +1,12 @@
 # watchers/gcode_handler.py
 import os
-from watchdog.events import FileSystemEventHandler
-from utils.file_wait import wait_for_file_complete
+
+from core.state import pending_jobs
+from gcode.parser import parse_gcode_metadata
 from utils.colors import WATCH
-from gcode.parser import parse_gcode_metadata   
-from core.state import pending_jobs                  
+from utils.file_wait import wait_for_file_complete
+from watchdog.events import FileSystemEventHandler
+
 
 class GcodeHandler(FileSystemEventHandler):
     def __init__(self, log, watch_folder):

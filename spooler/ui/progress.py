@@ -1,4 +1,4 @@
-from utils.colors import GREEN, GRAY, CYAN, RESET
+from utils.colors import CYAN, GRAY, GREEN, RESET
 
 BAR_LENGTH = 100
 SPINNER = ["|", "/", "-", "\\"]

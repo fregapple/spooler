@@ -1,13 +1,14 @@
 import asyncio
+
 from core.config import Config
-from core.logger import Logger
-from utils.colors import MAIN, CONFIG
 from core.device_loader import load_devices
 from core.initial_scan import initial_folder_scan
-from watchers.folder_watcher import start_folder_watcher
-from spoolman.manager import refresh_spool_cache
-from sdcp.listener import sdcp_listener
+from core.logger import Logger
 from sdcp.forwarder import forward, start_forwarder
+from sdcp.listener import sdcp_listener
+from spoolman.manager import refresh_spool_cache
+from utils.colors import CONFIG, MAIN
+from watchers.folder_watcher import start_folder_watcher
 
 
 async def main_async():
@@ -65,7 +66,7 @@ async def main_async():
     sdcp_task.cancel()
     try:
         await sdcp_task
-    except:
+    except Exception:
         pass
 
     log.info(MAIN, "Daemon exiting cleanly")

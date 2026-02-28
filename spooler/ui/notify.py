@@ -1,6 +1,7 @@
 import requests
 from utils.colors import APPRISE
 
+
 def notify(title, body, tag, config, log):
     """
     Send a notification to the Apprise server.

@@ -1,5 +1,7 @@
-import json, asyncio
+import asyncio
+import json
 from pathlib import Path
+
 from utils.colors import CONFIG
 
 # BASE_DIR = Path(__file__).parent.parent
@@ -42,7 +44,7 @@ class Config:
         if not self.path.exists():
             if self.logger:
                 self.logger.error(CONFIG, f"Config file not found: {self.path}")
-                self.logger.warn(CONFIG, f"Copy and rename the config_example.json file. Make sure to fill out all the necessary information.")
+                self.logger.warn(CONFIG, "Copy and rename the config_example.json file. Make sure to fill out all the necessary information.")
             raise FileNotFoundError(f"Config file not found: {self.path}")
         
         try:

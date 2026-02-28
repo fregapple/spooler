@@ -1,5 +1,3 @@
-import math
-
 def parse_message(msg):
     """Return None if irrelevant, or a dict with parsed SDCP status."""
     if "Status" not in msg:
