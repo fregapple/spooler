@@ -1,8 +1,28 @@
-This is collection of scripts I have created to bridge orca slicer with spoolman and the centauri carbon 3d printer.
+This started as a collection of scripts to Bridge Orcaslicer with Elegoo Centauri Carbon.
+
+But as I added more and more stuff, I eventually rewrote the whole thing. What was once a single daemon.py file. Has turned into something much more.
+
+Not everything is perfect. It works mostly for my own setup. BUT this can work for anyone else as long as the config file is filled properly.
+
+I am also attempting to make this work within a docker container to allow for a persistent "always on" type mode. That is more of a WIP, so default, we will be running this more as a one and done script whenever you click on "Print" in Orcaslicer.
+
+To accomplish this, included is another file "copy_to_watch.py". ATM, this file needs to be edited to your needs. But the purpose of this file is to act as a intermediatory between the daemon and Orca for the purpose of exporting / saving the GCODE to a watch folder of your choice that the daemon can read. Because, while print sends the GCODE to the printer, we don't have the file. YET!
+
+(as I have been looking throught the sdcp api, there are ways I can list / delete file on the printer. I may work out a way to perhpas copy the currently printing GCODE across to a "watch" folder, to then extract the information required for the daemon. EG filament color, gram usage estimate.
+Perhaps a work flow, instead of the watch_folder, could be:
+	1. Detect Print.
+	2. Copy GCODE / Read GCODE of current print.
+	3. Extract info from GCODE to variables.
+	4. When print is complete, instead of deleting file from watch_folder, we can instead have the option to delete it from the printer.
+	
+This would remove all need of a copy_to_watch.py at all, it would also remove the need of post processing in orca as well. Which would make setup easier.) Forgive my rambling, my brainstorming is just typing my thoughts. This doesn't belong in a README, so I will transfer this into issues and features when I have time.
+
+Why not include it within the daemon? I would like to, and to be honest, I am not sure why it isn't. There was some reason I had to have it seperate. Ideally I'd like it to be all in one. Perhaps, it was because I was trying to make this universal between network mounts and stuff.
+
+Now, why have I made this?
 
 
-
-Reason? I like the idea of having an inventory of the spool I have and what I have left, even if its just a decent estimate. 
+I like the idea of having an inventory of the spool I have and what I have left, even if its just a decent estimate. 
 Unfortunately the Centauri Carbon isn't able to integrate with spoolman directly, and the newer versions of orcaslicer has no way to link with spoolman either.
 
 
@@ -59,13 +79,13 @@ Then you must setup post-process scripts within orcaslicer, pointing to this pyt
 
 
 
-\*\*\*NOTE\*\*\* You will need to have python installed to run the initial script! But the daemon will install its required packages via the requirements.txt file included.
+\*\*\*NOTE\*\*\* You will need to have python installed to run the initial script! But the daemon will install its required packages into a venv via the requirements.txt file included.
 
 
 
 
 
-You must open config.json and enter all fields to ensure that the daemon can access all required parameters.
+You must open config_example.json and enter all fields to ensure that the daemon can access all required parameters. It must be then saved as config.json for the daemon to work.
 
 
 
@@ -159,9 +179,7 @@ You need to name your filament in Orcaslicer a certain way for this to work.
 
 
 
-as long as you name the filament preset like this, then the parser can identify and then match your spools in spoolman. If you create any of your own custom spools, you need to copy how all
-
-the external filaments are named to keep consistency.
+as long as you name the filament preset like this, then the parser can identify and then match your spools in spoolman. If you create any of your own custom spools, you need to copy how all the external filaments are named to keep consistency.
 
 
 
@@ -197,4 +215,5 @@ This will display the process running and their script names. EG /path/to/daemon
 Stop-Process -Id <ID>
 
 ```
+
 
