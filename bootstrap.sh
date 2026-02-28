@@ -6,7 +6,7 @@ if [ ! -d "/app/spooler" ]; then
     
     echo "[BOOTSTRAP] Copying code into /app/spooler ..."   
     cp -r /app/repo/spooler /app/spooler
-    cp /app/repo/config/config_example.json /app/config/config_example.json
+    cp /app/repo/config/config_example.json /app/config/config.json
 
 else
     echo "[BOOTSRAP] Code already present, skipping clone and copy."
