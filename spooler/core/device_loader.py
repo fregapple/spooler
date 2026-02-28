@@ -5,6 +5,7 @@ from utils.colors import DEVICE
 class DeviceContainer:
     pass
 
+
 def load_devices(config, log):
     container = DeviceContainer()
 
@@ -36,14 +37,16 @@ def load_devices(config, log):
                 version=3.3,
                 log=log,
                 model=model,
-                always_on=always_on
+                always_on=always_on,
             )
 
             log.info(DEVICE, f"Loaded device: {dtype} (ID: {dev_id})")
             setattr(container, dtype, device)
 
         except Exception as e:
-            log.error(DEVICE, f"Failed to initialize device {dtype} (ID: {dev_id}): {e}")
+            log.error(
+                DEVICE, f"Failed to initialize device {dtype} (ID: {dev_id}): {e}"
+            )
             setattr(container, dtype, None)
 
     return container

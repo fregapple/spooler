@@ -7,6 +7,8 @@ import time
 """
 This is needed to allow the GCODE file is completely created before reading it. Otherwise the daemon will load a partially created or empty gcode. Which will most-likely be missing the required information
 """
+
+
 def wait_for_file_complete(path, timeout=5):
     last_size = -1
     for _ in range(timeout * 10):

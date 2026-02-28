@@ -15,5 +15,5 @@ def parse_message(msg):
         "print_status": printinfo.get("Status"),
         "filename": printinfo.get("Filename", ""),
         "progress": printinfo.get("Progress", 0),
-        "printinfo": printinfo
+        "printinfo": printinfo,
     }

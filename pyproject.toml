@@ -1,0 +1,20 @@
+[tool.ruff]
+line-length = 120
+extend-select = ["I"]        # enable import sorting
+fix = true                   # allow autofixes
+target-version = "py310"
+
+[tool.black]
+line-length = 120
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+
+[tool.flake8]
+max-line-length = 120
+extend-ignore = [
+    "E203",  # Black-compatible
+    "W503",  # Black-compatible
+]

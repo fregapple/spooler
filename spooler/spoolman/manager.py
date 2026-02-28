@@ -36,7 +36,7 @@ def update_spoolman(spool_id, grams, config, log, notify_fn=None):
                 f"{grams}g deducted.",
                 config.apprise_tag_spoolman,
                 config,
-                log
+                log,
             )
 
     except Exception as e:

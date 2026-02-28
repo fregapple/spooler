@@ -36,12 +36,14 @@ async def sdcp_listener(config, log, devices=None):
                         await forward("sdcp", parsed)
                     except Exception:
                         pass
-                    
+
                     machine_status = parsed["machine_status"]
                     print_status = parsed["print_status"]
                     progress = parsed["progress"]
                     filename = parsed["filename"]
-                    total_extrusions = parsed["printinfo"].get("54 6F 74 61 6C 45 78 74 72 75 73 69 6F 6E 00")
+                    total_extrusions = parsed["printinfo"].get(
+                        "54 6F 74 61 6C 45 78 74 72 75 73 69 6F 6E 00"
+                    )
 
                     # Update state
                     if filename and filename.strip():
@@ -49,11 +51,14 @@ async def sdcp_listener(config, log, devices=None):
                         state.shortname = filename.split(".gcode")[0]
                     state.total_extrusions = total_extrusions
 
-
                     # -----------------------------
                     # PRINT START + PREHEAT
                     # -----------------------------
-                    if machine_status == [1] and (print_status == 16 or print_status == 13) and not state.active:
+                    if (
+                        machine_status == [1]
+                        and (print_status == 16 or print_status == 13)
+                        and not state.active
+                    ):
                         await events.handle_print_start(state, devices, config, log)
 
                     # -----------------------------

@@ -37,18 +37,12 @@ async def forward(message_type: str, payload: dict):
     if not clients:
         return  # No GUI connected — silently ignore
 
-    packet = {
-        "type": message_type,
-        "data": payload
-    }
+    packet = {"type": message_type, "data": payload}
 
     data = json.dumps(packet)
 
     # Send to all clients, ignore failures
-    await asyncio.gather(
-        *(ws.send(data) for ws in clients),
-        return_exceptions=True
-    )
+    await asyncio.gather(*(ws.send(data) for ws in clients), return_exceptions=True)
 
 
 async def broadcast(payload: dict):
@@ -61,7 +55,4 @@ async def broadcast(payload: dict):
 
     data = json.dumps(payload)
 
-    await asyncio.gather(
-        *(ws.send(data) for ws in clients),
-        return_exceptions=True
-    )
+    await asyncio.gather(*(ws.send(data) for ws in clients), return_exceptions=True)

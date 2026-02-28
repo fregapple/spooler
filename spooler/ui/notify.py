@@ -19,7 +19,9 @@ def notify(title, body, tag, config, log):
     try:
         url = f"http://{apprise_ip}/notify/{config.apprise_config}"
         requests.post(url, json=payload, headers=headers)
-        log.info(APPRISE, f"Notification sent to Apprise server: {config.apprise_config}")
+        log.info(
+            APPRISE, f"Notification sent to Apprise server: {config.apprise_config}"
+        )
 
     except Exception:
         log.error(APPRISE, "Apprise not reachable or misconfigured.")

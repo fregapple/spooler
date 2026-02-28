@@ -40,7 +40,6 @@ async def main_async():
             device_dicts.append(device.to_dict())
     await forward("devices", device_dicts)
 
-
     # Load spool cache
     refresh_spool_cache(config, log)
 

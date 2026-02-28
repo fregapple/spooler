@@ -43,7 +43,10 @@ def find_spool_for_preset(preset, spool_cache, log):
 
     selected = min(exact_matches, key=lambda s: s.get("remaining_weight", float("inf")))
 
-    log.info(MATCH, f"Using spool ID {selected['id']} for preset '{preset}' "
-                     f"(remaining {selected.get('remaining_weight', 'unknown')} g)")
+    log.info(
+        MATCH,
+        f"Using spool ID {selected['id']} for preset '{preset}' "
+        f"(remaining {selected.get('remaining_weight', 'unknown')} g)",
+    )
 
     return selected["id"]

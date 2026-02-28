@@ -47,5 +47,5 @@ def parse_gcode_metadata(path):
     return {
         "filament_presets": filament_presets or [],
         "filament_g_list": filament_g_list or [],
-        "path": path
+        "path": path,
     }

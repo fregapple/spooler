@@ -7,6 +7,7 @@ from textual.widgets import Log, ProgressBar, Static
 
 # ── Header ───────────────────────────────────────────────────
 
+
 class HeaderPanel(Static):
     def compose(self) -> ComposeResult:
         yield Static(
@@ -17,10 +18,12 @@ class HeaderPanel(Static):
             "███████║██║     ╚██████╔╝╚██████╔╝███████╗███████╗██║  ██║\n"
             "╚══════╝╚═╝      ╚═════╝  ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝\n"
             "Spoolman • Centauri Carbon • OrcaSlicer Bridge",
-            classes="header-text"
+            classes="header-text",
         )
 
+
 # ── Left column: printer + progress ──────────────────────────
+
 
 class PrinterInfoPanel(Static):
     printer = reactive("X1C")
@@ -42,6 +45,7 @@ class PrinterInfoPanel(Static):
             f"   Speed    {self.speed:<10}   Fan     {self.fan}"
         )
 
+
 class ProgressPanel(Static):
     progress = reactive(0)
     active = reactive(True)
@@ -54,7 +58,9 @@ class ProgressPanel(Static):
         if self.active:
             self.bar.update(progress=value)
 
+
 # ── DevicePanel (framed device card with title) ──────────────
+
 
 class DevicePanel(Static):
     def __init__(self, title: str, stats: dict, **kwargs):
@@ -67,7 +73,9 @@ class DevicePanel(Static):
         body = "\n".join(lines)
         return f"[b]{self.title}[/b]\n{body}"
 
+
 # ── Main app ─────────────────────────────────────────────────
+
 
 class Dashboard(App):
     CSS = """
@@ -136,19 +144,25 @@ class Dashboard(App):
                 yield ProgressPanel()
 
             with Vertical(id="right"):
-                yield DevicePanel("Air Purifier", {
-                    "Power:": "On",
-                    "Mode:": "Auto",
-                    "Fan Speed:": "Mid",
-                    "Filter Level:": "82%",
-                    "Filter Days:": "143",
-                })
+                yield DevicePanel(
+                    "Air Purifier",
+                    {
+                        "Power:": "On",
+                        "Mode:": "Auto",
+                        "Fan Speed:": "Mid",
+                        "Filter Level:": "82%",
+                        "Filter Days:": "143",
+                    },
+                )
 
-                yield DevicePanel("Lights", {
-                    "Power:": "Off",
-                    "Brightness:": "0%",
-                    "Color:": "#FFFFFF",
-                })
+                yield DevicePanel(
+                    "Lights",
+                    {
+                        "Power:": "Off",
+                        "Brightness:": "0%",
+                        "Color:": "#FFFFFF",
+                    },
+                )
 
         yield Log()
 
@@ -165,6 +179,7 @@ class Dashboard(App):
                 await asyncio.sleep(0.03)
 
         self.run_worker(update_progress())
+
 
 if __name__ == "__main__":
     Dashboard().run()

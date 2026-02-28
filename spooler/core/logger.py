@@ -7,33 +7,31 @@ from pathlib import Path
 from sdcp.forwarder import forward
 from utils.colors import LOG_DEBUG, LOG_ERROR, LOG_INFO, LOG_WARN, RESET
 
-ANSI_ESCAPE = re.compile(r'\x1B\[[0-?]*[ -/]*[@-~]')
+ANSI_ESCAPE = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
 BASE_DIR = Path(__file__).parent.parent
 LOG_PATH = BASE_DIR / "logs" / "daemon.log"
 
+
 class Logger:
-    LEVELS = {
-        "DEBUG": 10,
-        "INFO": 20,
-        "WARN": 30,
-        "ERROR": 40
-    }
+    LEVELS = {"DEBUG": 10, "INFO": 20, "WARN": 30, "ERROR": 40}
 
     COLORS = {
         "DEBUG": LOG_DEBUG,
         "INFO": LOG_INFO,
         "WARN": LOG_WARN,
-        "ERROR": LOG_ERROR
+        "ERROR": LOG_ERROR,
     }
 
-    def __init__(self, 
-                 level="INFO", 
-                 use_timestamp=True,
-                 log_to_file=True,
-                 file_path=LOG_PATH,
-                 max_size_mb=5,
-                 max_backups=2):
-        
+    def __init__(
+        self,
+        level="INFO",
+        use_timestamp=True,
+        log_to_file=True,
+        file_path=LOG_PATH,
+        max_size_mb=5,
+        max_backups=2,
+    ):
+
         self.level = self.LEVELS.get(level.upper(), 20)
         self.use_timestamp = use_timestamp
 
@@ -41,10 +39,10 @@ class Logger:
         self.file_path = Path(file_path)
         self.max_size = max_size_mb * 1024 * 1024
         self.max_backups = max_backups
-    
+
     def _should_log(self, level):
         return self.LEVELS[level] >= self.level
-    
+
     def _format(self, level, tag, message):
         color = self.COLORS[level]
         colored_message = f"{color}{message}{RESET}" if color else message
@@ -53,27 +51,25 @@ class Logger:
             ts = datetime.now().strftime("%H:%M:%S")
             return f"{ts} {tag} {colored_message}"
         return f"{tag} {colored_message}"
-    
+
     def _forward_log(self, level, tag, message):
         try:
-            asyncio.create_task(forward("log", {
-                "level": level,
-                "tag": tag,
-                "message": message
-            }))
+            asyncio.create_task(
+                forward("log", {"level": level, "tag": tag, "message": message})
+            )
         except RuntimeError:
             pass
 
     def _rotate_if_needed(self):
         if not self.file_path.exists():
             return
-        
+
         if self.file_path.stat().st_size < self.max_size:
             return
-        
+
         for i in range(self.max_backups, 0, -1):
             old = self.file_path.with_suffix(self.file_path.suffix + f".{i}")
-            older = self.file_path.with_suffix(self.file_path.suffix + F".{i+1}")
+            older = self.file_path.with_suffix(self.file_path.suffix + f".{i+1}")
             if old.exists():
                 if i == self.max_backups:
                     old.unlink()
@@ -88,9 +84,9 @@ class Logger:
 
         if not Path.exists(BASE_DIR / "logs"):
             os.makedirs(BASE_DIR / "logs", exist_ok=True)
-        
-        clean_text = ANSI_ESCAPE.sub('', text)
-    
+
+        clean_text = ANSI_ESCAPE.sub("", text)
+
         self._rotate_if_needed()
 
         with self.file_path.open("a", encoding="utf-8") as f:
@@ -103,7 +99,7 @@ class Logger:
             self._write_to_file(text)
             self._forward_log("DEBUG", tag, message)
 
-    def info(self, tag,message):
+    def info(self, tag, message):
         if self._should_log("INFO"):
             text = self._format("INFO", tag, message)
             print(text)

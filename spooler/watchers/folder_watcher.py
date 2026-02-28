@@ -5,7 +5,7 @@ from watchers.gcode_handler import GcodeHandler
 
 
 def start_folder_watcher(config, log):
-    
+
     handler = GcodeHandler(log, config.watch_folder)
     observer = Observer()
     observer.schedule(handler, config.watch_folder, recursive=False)
