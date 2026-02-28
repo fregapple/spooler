@@ -1,4 +1,0 @@
-watchdog
-websockets
-requests
-tinytuya
