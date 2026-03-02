@@ -11,7 +11,7 @@ def split_preset_name(preset):
     color = "-".join(parts[2:])
 
     if "(" in color:
-        color = color.split("(")[0]
+        color = color.split("(")[0].strip()
 
     return vendor, material, color
 

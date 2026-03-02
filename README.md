@@ -217,3 +217,37 @@ Stop-Process -Id <ID>
 ```
 
 
+*/ Testing /*
+
+The project includes automated unit tests to ensure everything works correctly.
+
+**Quick Test:**
+```bash
+./test.sh
+```
+
+**Manual Commands:**
+```bash
+# Run all tests
+pytest
+
+# Run with verbose output
+pytest -v
+
+# Run specific test file
+pytest spooler/tests/test_gcode.py
+
+# Run with coverage report
+pytest --cov=spooler --cov-report=html
+```
+
+**Test Files:**
+- `spooler/tests/test_utils.py` - Unit conversion tests
+- `spooler/tests/test_gcode.py` - G-code parsing tests
+- `spooler/tests/test_spoolman.py` - Spool matching tests
+- `spooler/tests/test_sdcp.py` - SDCP message parsing tests
+- `spooler/tests/test_watchers.py` - File watching tests
+
+See [TESTING.md](TESTING.md) for complete testing documentation.
+
+

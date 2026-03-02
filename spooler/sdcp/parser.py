@@ -9,9 +9,9 @@ def parse_message(msg):
     return {
         "machine_status": status.get("CurrentStatus"),
         "current_fan_speed": status.get("CurrentFanSpeed"),
-        "nozzle_temp": round(status.get("TempOfNozzle"), 0),
-        "bed_temp": round(status.get("TempOfHotbed"), 0),
-        "box_temp": round(status.get("TempOfBox"), 0),
+        "nozzle_temp": int(round(status.get("TempOfNozzle"))),
+        "bed_temp": int(round(status.get("TempOfHotbed"))),
+        "box_temp": int(round(status.get("TempOfBox"))),
         "print_status": printinfo.get("Status"),
         "filename": printinfo.get("Filename", ""),
         "progress": printinfo.get("Progress", 0),
