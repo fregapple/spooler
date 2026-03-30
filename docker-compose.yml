@@ -15,7 +15,8 @@ services:
       - PYTHONUNBUFFERED=1
       - SPOOLER_SERVICE=daemon
     healthcheck:
-      test: ["CMD", "bash", "-c", "echo > /dev/tcp/127.0.0.1/8765"]
+      test: ["CMD", "/app/spooler/venv/bin/python3", "-c",
+             "from websockets.sync.client import connect; connect('ws://127.0.0.1:8765').close()"]
       interval: 5s
       timeout: 3s
       retries: 30
