@@ -1,0 +1,37 @@
+services:
+  spooler-daemon:
+    build:
+      context: https://github.com/fregapple/spooler.git
+      dockerfile: Dockerfile
+    image: spooler:latest
+    container_name: spooler-daemon
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - /home/dock/appdata/spooler/config:/app/config
+      - /home/scripts/spooler/logs:/app/logs
+      - /home/scripts/spooler/watch:/app/watch
+    environment:
+      - PYTHONUNBUFFERED=1
+      - SPOOLER_SERVICE=daemon
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/127.0.0.1/8765"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 90s
+
+  spooler-webgui:
+    image: spooler:latest
+    container_name: spooler-webgui
+    network_mode: host
+    restart: unless-stopped
+    depends_on:
+      spooler-daemon:
+        condition: service_healthy
+    volumes:
+      - /home/dock/appdata/spooler/config:/app/config
+      - /home/scripts/spooler/logs:/app/logs
+    environment:
+      - PYTHONUNBUFFERED=1
+      - SPOOLER_SERVICE=webgui
