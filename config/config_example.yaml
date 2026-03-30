@@ -1,0 +1,51 @@
+schema_version: 2
+
+setup:
+  completed: true
+
+global:
+  log_level: DEBUG
+  log_timestamps: true
+  always_running: false
+  delete_after_print: true
+  hide_one_time_mode_terminal: false
+
+spoolman:
+  enabled: true
+  url: "http://ADD_IP_TO_SPOOLER_IF_NOT_LOCAL:7912"
+  fallback_url: "http://localhost:7912"
+
+notifications:
+  enabled: true
+  apprise_url: "http://ADD_IP_TO_APPRISE:8009"
+  apprise_config: "APPRISE_CONFIG_NAME"
+  tags:
+    custom: "spooler"
+    spoolman: "spoolman"
+
+printers:
+  - id: "centauri-01"
+    name: "Carbon Centauri"
+    enabled: true
+    sdcp_ws_url: "ws://ADD_YOUR_IP_HERE:3030/websocket?'command'='subscribe'"
+    watch_folder: "ADD LOCATION OF WATCH FOLDER. EG /spooler/watch"
+    delete_after_print: true
+
+devices:
+  - id: "airpurifier-main"
+    device_type: "airpurifier"
+    model: "LAP168"
+    always_on: false
+    connection:
+      device_id: "bffc5f3cf2ed8af39bcrgg"
+      local_key: "VRCJ$E5|EG[o-_7B"
+      ip: "Auto"
+
+assignments:
+  - device_id: "airpurifier-main"
+    printer_ids:
+      - "centauri-01"
+    policy:
+      turn_on_when_any_printing: true
+      turn_off_when_all_idle: true
+      idle_grace_seconds: 180

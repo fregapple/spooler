@@ -85,7 +85,7 @@ Then you must setup post-process scripts within orcaslicer, pointing to this pyt
 
 
 
-You must open config_example.json and enter all fields to ensure that the daemon can access all required parameters. It must be then saved as config.json for the daemon to work.
+You must open `config_example.yaml` and enter all fields to ensure that the daemon can access all required parameters. Save it as `config.yaml` for the daemon to work.
 
 
 
@@ -249,5 +249,65 @@ pytest --cov=spooler --cov-report=html
 - `spooler/tests/test_watchers.py` - File watching tests
 
 See [TESTING.md](TESTING.md) for complete testing documentation.
+
+
+
+
+3\. Web GUI Mode:
+
+
+
+&nbsp;\tRun `run_webgui.sh` (Linux) or `run_webgui.bat` (Windows) from the `spooler/` folder to launch a browser-based setup wizard and YAML config editor.
+
+&nbsp;\tThe GUI runs on `http://localhost:8949` and edits `config/config.yaml`.
+
+&nbsp;\tOptional: pass daemon host (and optional port) directly to target a remote daemon forwarder.
+
+```bash
+# Linux
+./run_webgui.sh 192.168.1.102
+./run_webgui.sh 192.168.1.102 8765
+```
+
+```bat
+REM Windows
+run_webgui.bat 192.168.1.102
+run_webgui.bat 192.168.1.102 8765
+```
+
+
+
+4\. Split Host Mode (WebGUI and Daemon on Different Machines):
+
+
+
+&nbsp;\tIf WebGUI runs on one machine and daemon runs on another, set the daemon forwarder bind host and the WebGUI forwarder target explicitly.
+
+&nbsp;\tOn the daemon host:
+
+```bash
+export SPOOLER_FORWARDER_HOST=0.0.0.0
+export SPOOLER_FORWARDER_PORT=8765
+cd spooler && ./run.sh
+```
+
+```bat
+REM Windows daemon host (same effect)
+run.bat 0.0.0.0 8765
+```
+
+&nbsp;\tOn the WebGUI host:
+
+```bash
+export SPOOLER_FORWARDER_URL=ws://DAEMON_HOST_IP:8765
+cd spooler && ./run_webgui.sh
+```
+
+&nbsp;\tMake sure TCP port `8765` is open between hosts.
+
+```bat
+REM Windows firewall example (run as Administrator)
+netsh advfirewall firewall add rule name="Spooler Forwarder 8765" dir=in action=allow protocol=TCP localport=8765
+```
 
 

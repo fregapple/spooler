@@ -28,6 +28,20 @@ echo "[SETUP] Installing dependencies..."
 pip install --upgrade pip
 pip install -r "$SCRIPT_DIR/requirements.txt"
 
+# Forwarder bind settings (for WebGUI connection)
+if [ -n "${1:-}" ]; then
+    export SPOOLER_FORWARDER_HOST="$1"
+fi
+if [ -n "${2:-}" ]; then
+    export SPOOLER_FORWARDER_PORT="$2"
+fi
+export SPOOLER_FORWARDER_HOST="${SPOOLER_FORWARDER_HOST:-127.0.0.1}"
+export SPOOLER_FORWARDER_PORT="${SPOOLER_FORWARDER_PORT:-8765}"
+echo "[NET] Forwarder bind: ${SPOOLER_FORWARDER_HOST}:${SPOOLER_FORWARDER_PORT}"
+if [ "${SPOOLER_FORWARDER_HOST}" = "127.0.0.1" ]; then
+    echo "[NET] Mode: local daemon only (same machine)"
+fi
+
 # Run daemon
 
 clear

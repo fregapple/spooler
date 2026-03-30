@@ -132,3 +132,50 @@ class TestGcodeHandler:
                     # Should add to pending_jobs with filename as key
                     assert 'test.gcode' in mock_jobs
                     assert mock_jobs['test.gcode'] == mock_metadata
+
+    def test_processes_modified_gcode_file(self, handler, temp_dir):
+        """Should update metadata when existing gcode file is modified."""
+        from watchdog.events import FileModifiedEvent
+
+        gcode_file = temp_dir / "test.gcode"
+        gcode_file.write_text("G28")
+        event = FileModifiedEvent(str(gcode_file))
+        event.is_directory = False
+
+        mock_metadata = {
+            'filament_presets': ['Updated'],
+            'filament_g_list': [75.0],
+            'path': str(gcode_file)
+        }
+
+        with patch('watchers.gcode_handler.wait_for_file_complete'):
+            with patch('watchers.gcode_handler.parse_gcode_metadata', return_value=mock_metadata):
+                with patch('watchers.gcode_handler.pending_jobs', {}) as mock_jobs:
+                    handler.on_modified(event)
+                    assert 'test.gcode' in mock_jobs
+                    assert mock_jobs['test.gcode'] == mock_metadata
+
+    def test_processes_moved_gcode_file(self, handler, temp_dir):
+        """Should process moved/renamed gcode files using destination path."""
+        from watchdog.events import FileMovedEvent
+
+        src_file = temp_dir / "temp_upload.part"
+        src_file.write_text("temp")
+        dest_file = temp_dir / "final.gcode"
+        dest_file.write_text("G28")
+
+        event = FileMovedEvent(str(src_file), str(dest_file))
+        event.is_directory = False
+
+        mock_metadata = {
+            'filament_presets': ['Moved'],
+            'filament_g_list': [40.0],
+            'path': str(dest_file)
+        }
+
+        with patch('watchers.gcode_handler.wait_for_file_complete'):
+            with patch('watchers.gcode_handler.parse_gcode_metadata', return_value=mock_metadata):
+                with patch('watchers.gcode_handler.pending_jobs', {}) as mock_jobs:
+                    handler.on_moved(event)
+                    assert 'final.gcode' in mock_jobs
+                    assert mock_jobs['final.gcode'] == mock_metadata

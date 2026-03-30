@@ -13,20 +13,40 @@ class GcodeHandler(FileSystemEventHandler):
         super().__init__()
         self.log = log
         self.watch_folder = watch_folder
+        self._processed_mtimes = {}
+
+    def _maybe_process_path(self, path):
+        if not path.lower().endswith(".gcode"):
+            return
+
+        filename = os.path.basename(path)
+        if not os.path.exists(path):
+            return
+
+        mtime = os.path.getmtime(path)
+        if self._processed_mtimes.get(path) == mtime:
+            return
+
+        wait_for_file_complete(path)
+        self.log.info(WATCH, f"New/updated G-code detected: {filename}")
+
+        meta = parse_gcode_metadata(path)
+        pending_jobs[filename] = meta
+        self._processed_mtimes[path] = mtime
+
+        self.log.info(WATCH, f"Parsed metadata: {meta}")
 
     def on_created(self, event):
         if event.is_directory:
             return
+        self._maybe_process_path(event.src_path)
 
-        if not event.src_path.lower().endswith(".gcode"):
+    def on_modified(self, event):
+        if event.is_directory:
             return
+        self._maybe_process_path(event.src_path)
 
-        filename = os.path.basename(event.src_path)
-
-        wait_for_file_complete(event.src_path)
-        self.log.info(WATCH, f"New G-code detected: {filename}")
-
-        meta = parse_gcode_metadata(event.src_path)
-        pending_jobs[filename] = meta
-
-        self.log.info(WATCH, f"Parsed metadata: {meta}")
+    def on_moved(self, event):
+        if event.is_directory:
+            return
+        self._maybe_process_path(event.dest_path)

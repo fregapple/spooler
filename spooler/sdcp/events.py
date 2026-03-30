@@ -1,12 +1,45 @@
 import asyncio
+import os
 
 from core.cleanup import cleanup
 from core.state import pending_jobs
+from gcode.parser import parse_gcode_metadata
 from spoolman.manager import refresh_spool_cache, update_spoolman
 from spoolman.matcher import find_spool_for_preset
 from ui.notify import notify
 from utils.colors import DEVICE, SDCP, SPOOLMAN
 from utils.mm_to_gram import extrusion_mm_to_grams
+
+
+def _resolve_pending_job(filename):
+    """Match SDCP filename against pending jobs using exact and basename keys."""
+    if not filename:
+        return None
+
+    candidates = [filename, os.path.basename(filename)]
+    for key in candidates:
+        if key in pending_jobs:
+            return pending_jobs[key]
+    return None
+
+
+def _refresh_pending_job_from_file(filename, watch_folder, log):
+    """Best-effort metadata refresh from the watched folder when watcher misses events."""
+    basename = os.path.basename(filename or "")
+    if not basename:
+        return None
+
+    path = os.path.join(watch_folder, basename)
+    if not os.path.isfile(path):
+        return None
+
+    try:
+        meta = parse_gcode_metadata(path)
+        pending_jobs[basename] = meta
+        return meta
+    except Exception as exc:
+        log.warn(SDCP, f"Failed to refresh metadata from file {basename}: {exc}")
+        return None
 
 
 async def handle_print_start(state, devices, config, log):
@@ -20,8 +53,13 @@ async def handle_print_start(state, devices, config, log):
     max_retries = 60
 
     for attempt in range(max_retries):
-        if state.filename in pending_jobs:
-            state.job = pending_jobs[state.filename]
+        state.job = _resolve_pending_job(state.filename)
+        if state.job:
+            break
+
+        # Long-running mode can miss create events when files are moved/overwritten.
+        state.job = _refresh_pending_job_from_file(state.filename, config.watch_folder, log)
+        if state.job:
             break
 
         if attempt % 10 == 0:

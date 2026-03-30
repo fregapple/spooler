@@ -1,5 +1,8 @@
 """Unit tests for SDCP message parsing."""
+import json
+
 import pytest
+from sdcp.forwarder import _json_default
 from sdcp.parser import parse_message
 
 
@@ -161,3 +164,19 @@ class TestSDCPParser:
         }
         result = parse_message(message)
         assert result["filename"] == long_filename
+
+
+def test_forwarder_json_default_handles_utf8_bytes():
+    """Forwarder serializer should convert UTF-8 bytes to strings."""
+    payload = {"value": b"hello"}
+    encoded = json.dumps(payload, default=_json_default)
+    decoded = json.loads(encoded)
+    assert decoded["value"] == "hello"
+
+
+def test_forwarder_json_default_handles_binary_bytes():
+    """Forwarder serializer should convert non-UTF8 bytes without raising."""
+    payload = {"value": b"\xff\x00\xfe"}
+    encoded = json.dumps(payload, default=_json_default)
+    decoded = json.loads(encoded)
+    assert isinstance(decoded["value"], str)

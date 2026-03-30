@@ -4,7 +4,12 @@ from core.config import Config
 from core.device_loader import load_devices
 from core.initial_scan import initial_folder_scan
 from core.logger import Logger
-from sdcp.forwarder import forward, start_forwarder
+from core.runtime_bridge import (
+    control_loop,
+    device_state_publisher,
+    publish_device_state_snapshot,
+)
+from sdcp.forwarder import forward, get_control_queue, start_forwarder
 from sdcp.listener import sdcp_listener
 from spoolman.manager import refresh_spool_cache
 from utils.colors import CONFIG, MAIN
@@ -17,6 +22,8 @@ async def main_async():
 
     # Start forwarder
     await start_forwarder()
+    control_queue = get_control_queue()
+    sdcp_command_queue = asyncio.Queue()
 
     # Load config
     try:
@@ -40,6 +47,9 @@ async def main_async():
             device_dicts.append(device.to_dict())
     await forward("devices", device_dicts)
 
+    # Publish an initial device state snapshot for GUI clients.
+    await publish_device_state_snapshot(devices, log)
+
     # Load spool cache
     refresh_spool_cache(config, log)
 
@@ -50,7 +60,11 @@ async def main_async():
     observer = start_folder_watcher(config, log)
 
     # Start SDCP listener
-    sdcp_task = asyncio.create_task(sdcp_listener(config, log, devices))
+    sdcp_task = asyncio.create_task(sdcp_listener(config, log, devices, command_queue=sdcp_command_queue))
+
+    # Start periodic device-state updates and control handling
+    device_state_task = asyncio.create_task(device_state_publisher(devices, log))
+    control_task = asyncio.create_task(control_loop(control_queue, devices, sdcp_command_queue, log))
 
     # Wait for shutdown
     await config.shutdown_event.wait()
@@ -63,8 +77,20 @@ async def main_async():
 
     # Stop SDCP listener
     sdcp_task.cancel()
+    device_state_task.cancel()
+    control_task.cancel()
     try:
         await sdcp_task
+    except Exception:
+        pass
+
+    try:
+        await device_state_task
+    except Exception:
+        pass
+
+    try:
+        await control_task
     except Exception:
         pass
 

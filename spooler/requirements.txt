@@ -2,3 +2,5 @@ watchdog
 websockets
 requests
 tinytuya
+PyYAML
+nicegui

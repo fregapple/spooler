@@ -28,6 +28,18 @@ echo [SETUP] Installing dependencies...
 pip install --upgrade pip
 pip install -r "%~dp0requirements.txt"
 
+REM Forwarder bind settings (for WebGUI connection)
+REM Usage:
+REM   run.bat                -> default 127.0.0.1:8765
+REM   run.bat 0.0.0.0        -> bind all interfaces on port 8765
+REM   run.bat 0.0.0.0 8765   -> bind all interfaces on specific port
+if not "%~1"=="" set "SPOOLER_FORWARDER_HOST=%~1"
+if not "%~2"=="" set "SPOOLER_FORWARDER_PORT=%~2"
+if "%SPOOLER_FORWARDER_HOST%"=="" set "SPOOLER_FORWARDER_HOST=127.0.0.1"
+if "%SPOOLER_FORWARDER_PORT%"=="" set "SPOOLER_FORWARDER_PORT=8765"
+echo [NET] Forwarder bind: %SPOOLER_FORWARDER_HOST%:%SPOOLER_FORWARDER_PORT%
+if "%SPOOLER_FORWARDER_HOST%"=="127.0.0.1" echo [NET] Mode: local daemon only (same machine)
+
 REM Run daemon
 cls
 echo  _______  _______  _______  _______  ___      _______  ______
